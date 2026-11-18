@@ -408,9 +408,9 @@ footer a:hover{color:var(--gold)}
         <p>O convite com o link do Google Meet foi para <b id="pEmail"></b>. Se não aparecer em alguns minutos, olhe também o spam ou a aba Promoções.</p>
         <div class="acoes">
           <a class="btn btn-gold" id="pMeet" target="_blank" rel="noopener" hidden>Link do Meet ↗</a>
-          <button class="btn btn-line" id="pIcs" type="button">Adicionar ao calendário</button>
+          <a class="btn btn-line" id="pGoogle" target="_blank" rel="noopener">Salvar no Google Agenda ↗</a>
         </div>
-        <p style="font-size:.8rem">Precisa mudar? Responda o convite ou me chame no <a href="https://ig.me/m/rovyacreative" target="_blank" rel="noopener">Instagram</a>.</p>
+        <p style="font-size:.8rem">Usa Apple ou Outlook? <a href="#" id="pIcs">Baixe o convite</a>. Precisa mudar? Responda o convite ou me chame no <a href="https://ig.me/m/rovyacreative" target="_blank" rel="noopener">Instagram</a>. · <a href="#" id="pNovo">Marcar outro horário</a></p>
       </div>
 
       <!-- agenda fechada / erro -->
@@ -558,24 +558,32 @@ $('f').onsubmit = async ev => {
 };
 
 // ---- 3. pronto ----
-function confirmado(h, email, meet) {
+const GUARDADO = 'rovya-agendamento';   // o convidado que recarrega ou volta depois ainda vê a confirmação e o link do Meet
+function confirmado(h, email, meet, festa = true) {
+  try { localStorage.setItem(GUARDADO, JSON.stringify({ inicio: h.inicio, fim: h.fim, email, meet })); } catch (e) { }
+  const z = d => new Date(d).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const titulo = 'Primeira conversa · ROVYA Creative', nota = meet ? 'Link do Google Meet: ' + meet : 'O link do Google Meet está no convite enviado por e-mail.';
+  $('pGoogle').href = 'https://calendar.google.com/calendar/render?' + new URLSearchParams({ action: 'TEMPLATE', text: titulo, dates: `${z(h.inicio)}/${z(h.fim)}`, details: nota, location: meet || 'Google Meet' });
   $('pQuando').textContent = `${fmt(h.inicio, { weekday: 'long', day: 'numeric', month: 'long' })}, às ${hora(h.inicio)}`;
   $('pEmail').textContent = email;
-  if (meet) { $('pMeet').href = meet; $('pMeet').hidden = false; }
-  $('pIcs').onclick = () => {
-    const z = d => new Date(d).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  $('pMeet').hidden = !meet; if (meet) $('pMeet').href = meet;
+  $('pIcs').onclick = ev => {
+    ev.preventDefault();
     const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//ROVYA Creative//Agenda//PT', 'BEGIN:VEVENT', `UID:${z(h.inicio)}-${Math.random().toString(36).slice(2)}@rovyacreative.com.br`,
-      `DTSTAMP:${z(Date.now())}`, `DTSTART:${z(h.inicio)}`, `DTEND:${z(h.fim)}`, 'SUMMARY:Primeira conversa · ROVYA Creative',
-      `DESCRIPTION:${meet ? 'Link do Google Meet: ' + meet : 'O link do Google Meet está no convite enviado por e-mail.'}`, `LOCATION:${meet || 'Google Meet'}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+      `DTSTAMP:${z(Date.now())}`, `DTSTART:${z(h.inicio)}`, `DTEND:${z(h.fim)}`, `SUMMARY:${titulo}`,
+      `DESCRIPTION:${nota}`, `LOCATION:${meet || 'Google Meet'}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
     const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([ics], { type: 'text/calendar' })), download: 'conversa-rovya.ics' });
     a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   };
   passo(3); document.querySelectorAll('#passos span').forEach(s => s.className = 'feito'); document.querySelectorAll('#passos i').forEach(i => i.classList.add('cheio'));
   mostrar('ePronto');
-  dispatchEvent(new Event('rovya:comemorar'));   // a Sabrina do canto comemora junto
+  if (festa) dispatchEvent(new Event('rovya:comemorar'));   // a Sabrina do canto comemora junto
 }
+$('pNovo').onclick = ev => { ev.preventDefault(); try { localStorage.removeItem(GUARDADO); } catch (e) { } carregar(); };
 $('fTentar').onclick = carregar;
-carregar();
+let salvo = null; try { salvo = JSON.parse(localStorage.getItem(GUARDADO)); } catch (e) { }
+if (salvo?.inicio && new Date(salvo.fim) > new Date()) confirmado(salvo, salvo.email, salvo.meet, false);
+else { try { localStorage.removeItem(GUARDADO); } catch (e) { } carregar(); }
 </script>
 <script src="assistente.js" defer></script>
 </body>
