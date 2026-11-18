@@ -14,25 +14,26 @@
     --rva-serif:var(--serif,"Cormorant Garamond",Georgia,serif);--rva-sans:var(--sans,Inter,system-ui,sans-serif);
     position:fixed;right:max(20px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));z-index:70;font-family:var(--rva-sans);color:var(--rva-ink)}
   .rva *{box-sizing:border-box;margin:0;padding:0}
-  /* mascote em pé no canto: a mini Sabrina acenando (img/mascote.*, feito no Blender: 3d/mascote.py) */
-  .rva-bt{position:relative;width:105px;height:140px;border:0;padding:0;cursor:pointer;background:none;display:block;
+  /* a Sabrina ilustrada no canto, animada (inclina a cabeça, mexe a mão, pisca): img/assistente.* (Blender: 3d/ilustracao/animar.py) */
+  .rva-bt{position:relative;width:140px;height:141px;border:0;padding:0;cursor:pointer;background:none;display:block;
     transition:transform .35s cubic-bezier(.2,.8,.2,1);animation:rva-entra .9s 1.2s cubic-bezier(.2,.8,.2,1) both}
-  .rva-bt:hover{transform:translateY(-4px) scale(1.04)}
-  .rva-bt video,.rva-bt img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;object-position:bottom;display:block;filter:drop-shadow(0 6px 10px rgba(0,0,0,.28))}
-  .rva-bt::before{content:"";position:absolute;left:12%;right:18%;bottom:-4px;height:14px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.42),transparent)}
-  .rva-bt::after{content:"";position:absolute;left:4%;right:10%;bottom:-8px;height:22px;border-radius:50%;border:1px solid var(--rva-gold);opacity:0;animation:rva-onda 3.2s 2.6s infinite}
-  .rva-bt .rva-x{position:absolute;z-index:2;right:-2px;top:6px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--rva-bg);border:1px solid var(--rva-gold);
+  .rva-bt:hover{transform:translateY(-4px) scale(1.03)}
+  .rva.rva-pequena .rva-bt{width:108px;height:109px}  /* na agenda: menor, para não cobrir o painel */
+  .rva.rva-pequena .rva-dica{right:100px;bottom:62px}
+  .rva.rva-pequena .rva-jan{bottom:124px}
+  .rva-bt video,.rva-bt img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;object-position:bottom;display:block;filter:drop-shadow(0 10px 16px rgba(0,0,0,.35))}
+  .rva-bt img.rva-flutua{animation:rva-flutua 3.2s ease-in-out infinite;transform-origin:50% 100%}
+  .rva-bt .rva-x{position:absolute;z-index:2;right:2px;top:2px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--rva-bg);border:1px solid var(--rva-gold);
     opacity:0;transform:scale(.4);transition:.3s}
   .rva-bt .rva-x svg{width:13px;height:13px;stroke:var(--rva-gold)}
   .rva.aberta .rva-bt .rva-x{opacity:1;transform:none}
-  .rva.aberta .rva-bt::after{animation:none}
-  .rva-dica{position:absolute;right:98px;bottom:74px;width:max-content;max-width:min(300px,calc(100vw - 110px));padding:.7rem 2.2rem .7rem 1rem;border-radius:16px 16px 4px 16px;
+  .rva-dica{position:absolute;right:128px;bottom:84px;width:max-content;max-width:min(300px,calc(100vw - 110px));padding:.7rem 2.2rem .7rem 1rem;border-radius:16px 16px 4px 16px;
     background:color-mix(in srgb,var(--rva-bg) 90%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--rva-line);
     box-shadow:0 18px 40px rgba(0,0,0,.35);font-size:.86rem;line-height:1.45;cursor:pointer;animation:rva-surge .6s cubic-bezier(.2,.8,.2,1) both}
   .rva-dica b{display:block;font:500 1.05rem/1.2 var(--rva-serif);color:var(--rva-gold2);margin-bottom:.15rem}
   .rva-dica button{position:absolute;top:.35rem;right:.4rem;width:24px;height:24px;border:0;background:none;color:var(--rva-mute);cursor:pointer;font-size:1rem;line-height:1}
   .rva.aberta .rva-dica{display:none}
-  .rva-jan{position:absolute;right:0;bottom:154px;width:min(380px,calc(100vw - 32px));height:min(600px,calc(100svh - 190px));display:flex;flex-direction:column;overflow:hidden;
+  .rva-jan{position:absolute;right:0;bottom:156px;width:min(380px,calc(100vw - 32px));height:min(600px,calc(100svh - 190px));display:flex;flex-direction:column;overflow:hidden;
     border-radius:20px;border:1px solid var(--rva-line);background:color-mix(in srgb,var(--rva-bg) 93%,transparent);backdrop-filter:blur(20px) saturate(1.1);-webkit-backdrop-filter:blur(20px) saturate(1.1);
     box-shadow:0 40px 90px rgba(0,0,0,.5);transform-origin:bottom right;opacity:0;transform:translateY(14px) scale(.96);pointer-events:none;visibility:hidden;
     transition:opacity .35s,transform .45s cubic-bezier(.2,.8,.2,1),visibility 0s .45s}
@@ -78,43 +79,42 @@
   .rva :focus-visible{outline:2px solid var(--rva-gold);outline-offset:2px}
   @keyframes rva-entra{from{opacity:0;transform:translateY(20px) scale(.8)}to{opacity:1;transform:none}}
   @keyframes rva-surge{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  @keyframes rva-onda{0%{opacity:.7;transform:scale(1)}70%,100%{opacity:0;transform:scale(1.35)}}
+  @keyframes rva-flutua{0%,100%{transform:none}50%{transform:translateY(-3px) rotate(-1deg)}}
   @keyframes rva-pula{0%,60%,100%{transform:none;opacity:.5}30%{transform:translateY(-4px);opacity:1}}
   @media (max-width:520px){
     .rva{right:14px;bottom:14px}
-    .rva-bt{width:74px;height:98px}
-    .rva-dica{right:0;bottom:106px;max-width:min(250px,calc(100vw - 40px))}
+    .rva-bt{width:104px;height:105px}
+    .rva-dica{display:none}  /* no celular o balão cobriria os botões do topo: ela acenando já convida */
     .rva-jan{position:fixed;left:8px;right:8px;bottom:120px;width:auto;height:min(72svh,600px)}
   }
   @media (prefers-reduced-motion:reduce){.rva *,.rva *::before,.rva *::after{animation:none!important;transition:none!important}}`;
 
   const el = document.createElement('div');
-  el.className = 'rva';
+  el.className = 'rva' + (NA_AGENDA ? ' rva-pequena' : '');
   el.innerHTML = `<style>${css}</style>
     <div class="rva-jan" id="rvaJan" role="dialog" aria-modal="false" aria-label="Conversa com a assistente da Sabrina">
-      <div class="rva-topo"><img src="img/mascote-rosto.webp" alt="" width="44" height="44"><div><b>Sabrina Amorim</b><span><i></i>Assistente · resposta automática</span></div>
+      <div class="rva-topo"><img src="img/assistente-rosto.webp" alt="" width="44" height="44"><div><b>Sabrina Amorim</b><span><i></i>Assistente · resposta automática</span></div>
         <button class="rva-fechar" type="button" aria-label="Fechar conversa"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3l10 10M13 3L3 13"/></svg></button></div>
       <div class="rva-msgs" aria-live="polite"></div>
       <div class="rva-acoes"></div>
       <div class="rva-pe">A Sabrina responde pessoalmente o que você deixar aqui.</div>
     </div>
     <button class="rva-bt" type="button" aria-label="Abrir conversa com a assistente da Sabrina" aria-expanded="false" aria-controls="rvaJan">
-      <img class="rva-mascote" src="img/mascote-parado.webp" alt="" width="105" height="140">
+      <img class="rva-mascote" src="img/assistente-parada.webp" alt="" width="140" height="141">
       <span class="rva-x" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke-width="1.6"><path d="M3 3l10 10M13 3L3 13"/></svg></span>
     </button>`;
   document.body.append(el);
   const $ = s => el.querySelector(s), msgs = $('.rva-msgs'), acoes = $('.rva-acoes'), bt = $('.rva-bt');
-  // mascote animado (acenando, piscando) depois que a página já carregou; quem pediu menos movimento fica com a imagem parada.
-  // WebM com transparência (83 KB) onde funciona; Safari não mostra transparência em WebM, então lá vai o WebP animado.
+  // animação depois que a página já carregou; quem pediu menos movimento fica com a imagem parada.
+  // WebM com transparência (49 KB) onde funciona; Safari não mostra transparência em WebM: lá ela só flutua de leve (CSS).
   const animar = () => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const safari = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
     const parado = $('.rva-mascote');
-    if (!safari && document.createElement('video').canPlayType('video/webm; codecs="vp9"')) {
-      const v = Object.assign(document.createElement('video'), { muted: true, loop: true, autoplay: true, playsInline: true, src: 'img/mascote.webm' });
-      v.setAttribute('aria-hidden', 'true'); v.disablePictureInPicture = true;
-      v.addEventListener('playing', () => parado.replaceWith(v), { once: true }); v.play().catch(() => { });
-    } else { const a = new Image(); a.onload = () => { parado.src = a.src; }; a.src = 'img/mascote.webp'; }
+    if (safari || !document.createElement('video').canPlayType('video/webm; codecs="vp9"')) return parado.classList.add('rva-flutua');
+    const v = Object.assign(document.createElement('video'), { muted: true, loop: true, autoplay: true, playsInline: true, src: 'img/assistente.webm' });
+    v.setAttribute('aria-hidden', 'true'); v.disablePictureInPicture = true;
+    v.addEventListener('playing', () => parado.replaceWith(v), { once: true }); v.play().catch(() => parado.classList.add('rva-flutua'));
   };
   (document.readyState === 'complete' ? Promise.resolve() : new Promise(r => addEventListener('load', r, { once: true }))).then(() => setTimeout(animar, 800));
   const espera = ms => new Promise(r => setTimeout(r, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : ms));
