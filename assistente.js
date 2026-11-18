@@ -17,7 +17,7 @@
   .rva-bt{position:relative;width:64px;height:64px;border-radius:50%;border:0;padding:0;cursor:pointer;background:none;display:block;
     box-shadow:0 14px 34px rgba(0,0,0,.45);transition:transform .35s cubic-bezier(.2,.8,.2,1);animation:rva-entra .8s 1.2s cubic-bezier(.2,.8,.2,1) both}
   .rva-bt:hover{transform:translateY(-3px) scale(1.04)}
-  .rva-bt img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;border:2px solid var(--rva-bg)}
+  .rva-bt video{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;border:2px solid var(--rva-bg);background:#2a1014}
   .rva-bt::before{content:"";position:absolute;inset:-4px;border-radius:50%;padding:2px;background:conic-gradient(from 210deg,var(--rva-gold2),var(--rva-gold),#7a5a2a,var(--rva-gold2));
     -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
   .rva-bt::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid var(--rva-gold);opacity:0;animation:rva-onda 3.2s 2.4s infinite}
@@ -99,11 +99,14 @@
       <div class="rva-pe">A Sabrina responde pessoalmente o que você deixar aqui.</div>
     </div>
     <button class="rva-bt" type="button" aria-label="Abrir conversa com a assistente da Sabrina" aria-expanded="false" aria-controls="rvaJan">
-      <img src="img/sabrina-avatar.webp" alt="" width="64" height="64"><span class="rva-on" aria-hidden="true"></span>
+      <video autoplay muted loop playsinline disablepictureinpicture disableremoteplayback poster="img/sabrina-avatar-3d.webp" aria-hidden="true">
+        <source src="img/sabrina-avatar.webm" type="video/webm"><source src="img/sabrina-avatar.mp4" type="video/mp4"></video><span class="rva-on" aria-hidden="true"></span>
       <span class="rva-x" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke-width="1.6"><path d="M3 3l10 10M13 3L3 13"/></svg></span>
     </button>`;
   document.body.append(el);
   const $ = s => el.querySelector(s), msgs = $('.rva-msgs'), acoes = $('.rva-acoes'), bt = $('.rva-bt');
+  // retrato em relevo 3D girando (Blender); quem pediu menos movimento vê só o primeiro quadro
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { const v = $('.rva-bt video'); v.removeAttribute('autoplay'); v.pause(); }
   const espera = ms => new Promise(r => setTimeout(r, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : ms));
   let iniciou = false, ocupado = false;
 
