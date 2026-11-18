@@ -14,20 +14,24 @@
     --rva-serif:var(--serif,"Cormorant Garamond",Georgia,serif);--rva-sans:var(--sans,Inter,system-ui,sans-serif);
     position:fixed;right:max(20px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));z-index:70;font-family:var(--rva-sans);color:var(--rva-ink)}
   .rva *{box-sizing:border-box;margin:0;padding:0}
-  /* a Sabrina estilo animação 3D no canto, animada (inclina a cabeça, cabelo balança, pisca): img/assistente.* (Blender: 3d/pixar/animar.py) */
-  .rva-bt{position:relative;width:104px;height:157px;border:0;padding:0;cursor:pointer;background:none;display:block;
+  /* a Sabrina estilo animação 3D no canto: acenando (animada) e trocando de pose conforme a conversa — img/sabrina-*.webp|webm (3d/poses/) */
+  .rva-bt{position:relative;width:148px;height:160px;border:0;padding:0;cursor:pointer;background:none;display:block;
     transition:transform .35s cubic-bezier(.2,.8,.2,1);animation:rva-entra .9s 1.2s cubic-bezier(.2,.8,.2,1) both}
   .rva-bt:hover{transform:translateY(-4px) scale(1.03)}
-  .rva.rva-pequena .rva-bt{width:82px;height:124px}  /* na agenda: menor, para não cobrir o painel */
-  .rva.rva-pequena .rva-dica{right:84px;bottom:70px}
-  .rva.rva-pequena .rva-jan{bottom:140px}
+  .rva.rva-pequena .rva-bt{width:120px;height:130px}  /* na agenda: menor, para não cobrir o painel */
+  .rva.rva-pequena .rva-dica{right:104px;bottom:76px}
+  .rva.rva-pequena .rva-jan{bottom:146px}
   .rva-bt video,.rva-bt img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;object-position:bottom;display:block;filter:drop-shadow(0 10px 16px rgba(0,0,0,.35))}
   .rva-bt img.rva-flutua{animation:rva-flutua 3.2s ease-in-out infinite;transform-origin:50% 100%}
+  .rva-bt .rva-pose{position:absolute;inset:0;z-index:1;opacity:0;transition:opacity .22s;pointer-events:none}
+  .rva-bt.com-pose .rva-pose{opacity:1;animation:rva-pop .45s cubic-bezier(.2,1.4,.4,1)}
+  .rva-bt.com-pose .rva-base{opacity:0}
+  .rva-bt .rva-base{transition:opacity .22s}
   .rva-bt .rva-x{position:absolute;z-index:2;right:2px;top:2px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--rva-bg);border:1px solid var(--rva-gold);
     opacity:0;transform:scale(.4);transition:.3s}
   .rva-bt .rva-x svg{width:13px;height:13px;stroke:var(--rva-gold)}
   .rva.aberta .rva-bt .rva-x{opacity:1;transform:none}
-  .rva-dica{position:absolute;right:130px;bottom:140px;width:max-content;max-width:min(300px,calc(100vw - 110px));padding:.7rem 2.2rem .7rem 1rem;border-radius:16px 16px 4px 16px;
+  .rva-dica{position:absolute;right:150px;bottom:132px;width:max-content;max-width:min(300px,calc(100vw - 110px));padding:.7rem 2.2rem .7rem 1rem;border-radius:16px 16px 4px 16px;
     background:color-mix(in srgb,var(--rva-bg) 90%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--rva-line);
     box-shadow:0 18px 40px rgba(0,0,0,.35);font-size:.86rem;line-height:1.45;cursor:pointer;animation:rva-surge .6s cubic-bezier(.2,.8,.2,1) both}
   .rva-dica b{display:block;font:500 1.05rem/1.2 var(--rva-serif);color:var(--rva-gold2);margin-bottom:.15rem}
@@ -80,10 +84,11 @@
   @keyframes rva-entra{from{opacity:0;transform:translateY(20px) scale(.8)}to{opacity:1;transform:none}}
   @keyframes rva-surge{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   @keyframes rva-flutua{0%,100%{transform:none}50%{transform:translateY(-3px) rotate(-1deg)}}
+  @keyframes rva-pop{0%{transform:scale(.94) translateY(4px)}100%{transform:none}}
   @keyframes rva-pula{0%,60%,100%{transform:none;opacity:.5}30%{transform:translateY(-4px);opacity:1}}
   @media (max-width:520px){
     .rva{right:14px;bottom:14px}
-    .rva-bt{width:78px;height:118px}
+    .rva-bt{width:111px;height:120px}
     .rva-dica{display:none}  /* no celular o balão cobriria os botões do topo: ela acenando já convida */
     .rva-jan{position:fixed;left:8px;right:8px;bottom:136px;width:auto;height:min(70svh,600px)}
   }
@@ -100,32 +105,47 @@
       <div class="rva-pe">A Sabrina responde pessoalmente o que você deixar aqui.</div>
     </div>
     <button class="rva-bt" type="button" aria-label="Abrir conversa com a assistente da Sabrina" aria-expanded="false" aria-controls="rvaJan">
-      <img class="rva-mascote" src="img/assistente-parada.webp" alt="" width="104" height="157">
+      <img class="rva-mascote rva-base" src="img/sabrina-aceno.webp" alt="" width="148" height="160"><img class="rva-pose" alt="" width="148" height="160">
       <span class="rva-x" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke-width="1.6"><path d="M3 3l10 10M13 3L3 13"/></svg></span>
     </button>`;
   document.body.append(el);
   const $ = s => el.querySelector(s), msgs = $('.rva-msgs'), acoes = $('.rva-acoes'), bt = $('.rva-bt');
   // animação depois que a página já carregou; quem pediu menos movimento fica com a imagem parada.
-  // WebM com transparência (56 KB) onde funciona; Safari não mostra transparência em WebM: lá ela só flutua de leve (CSS).
+  // WebM com transparência (108 KB) onde funciona; Safari não mostra transparência em WebM: lá ela só flutua de leve (CSS).
   const animar = () => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const safari = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
     const parado = $('.rva-mascote');
     if (safari || !document.createElement('video').canPlayType('video/webm; codecs="vp9"')) return parado.classList.add('rva-flutua');
-    const v = Object.assign(document.createElement('video'), { muted: true, loop: true, autoplay: true, playsInline: true, src: 'img/assistente.webm' });
-    v.setAttribute('aria-hidden', 'true'); v.disablePictureInPicture = true;
+    const v = Object.assign(document.createElement('video'), { muted: true, loop: true, autoplay: true, playsInline: true, src: 'img/sabrina-aceno.webm' });
+    v.setAttribute('aria-hidden', 'true'); v.disablePictureInPicture = true; v.className = 'rva-base';
     v.addEventListener('playing', () => parado.replaceWith(v), { once: true }); v.play().catch(() => parado.classList.add('rva-flutua'));
   };
   (document.readyState === 'complete' ? Promise.resolve() : new Promise(r => addEventListener('load', r, { once: true }))).then(() => setTimeout(animar, 800));
   const espera = ms => new Promise(r => setTimeout(r, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : ms));
   let iniciou = false, ocupado = false;
 
+  // ---- poses: a Sabrina reage à conversa (todas na mesma tela, o rosto não "pula") ----
+  const POSES = ['oi', 'pensando', 'apresentando', 'cruzados', 'comemorando'];
+  let poses_carregadas = false, volta;
+  const carregarPoses = () => { if (poses_carregadas) return; poses_carregadas = true; POSES.forEach(p => { new Image().src = `img/sabrina-${p}.webp`; }); };
+  function pose(nome, segundos) {
+    clearTimeout(volta);
+    const img = $('.rva-pose');
+    if (!nome || nome === 'aceno') return bt.classList.remove('com-pose');
+    img.src = `img/sabrina-${nome}.webp`; bt.classList.remove('com-pose'); void bt.offsetWidth; bt.classList.add('com-pose');
+    if (segundos) volta = setTimeout(() => pose('aceno'), segundos * 1000);
+  }
+  addEventListener('rovya:comemorar', () => { carregarPoses(); pose('comemorando', 4); });   // agendar.html: agendamento confirmado
+
   // ---- conversa ----
   const rolar = () => msgs.scrollTo({ top: msgs.scrollHeight, behavior: 'smooth' });
-  async function fala(html) {
+  async function fala(html, depois = 'aceno') {
+    pose('pensando');
     const d = document.createElement('div'); d.className = 'rva-m rva-digitando'; d.innerHTML = '<i></i><i></i><i></i>'; msgs.append(d); rolar();
     await espera(Math.min(1300, 450 + html.replace(/<[^>]+>/g, '').length * 9));
     d.className = 'rva-m'; d.innerHTML = html; rolar();
+    pose(depois);
   }
   const eu = t => { const d = document.createElement('div'); d.className = 'rva-m eu'; d.textContent = t; msgs.append(d); rolar(); };
   function opcoes(lista) {
@@ -137,36 +157,36 @@
     ['Ver projetos', NA_AGENDA ? './#projetos' : '#projetos'], ['Deixar meu contato', 'contato'], ['Falar pelo Instagram', IG]];
   const ESTADOS = {
     async inicio() {
-      await fala('Oi! 👋 Eu sou a assistente da <b>Sabrina</b>, aqui na ROVYA.');
-      await fala(NA_AGENDA ? 'Ficou alguma dúvida antes de escolher o horário? Posso te ajudar com:' : 'Posso te ajudar a dar o primeiro passo com a sua marca. Sobre o que você quer saber?');
+      await fala('Oi! 👋 Eu sou a assistente da <b>Sabrina</b>, aqui na ROVYA.', 'oi');
+      await fala(NA_AGENDA ? 'Ficou alguma dúvida antes de escolher o horário? Posso te ajudar com:' : 'Posso te ajudar a dar o primeiro passo com a sua marca. Sobre o que você quer saber?', 'apresentando');
       opcoes(MENU());
     },
     async menu() { await fala('Posso ajudar com mais alguma coisa?'); opcoes(MENU()); },
     async agenda() {
-      if (NA_AGENDA) { await fala('Você já está na agenda da Sabrina 🙂 É só escolher um dia no calendário: os que têm um ponto dourado estão com horários livres.'); return opcoes([['Como é a conversa?', 'conversa'], ['Outra dúvida', 'menu']]); }
-      await fala('Que bom! A primeira conversa é <b>online, pelo Google Meet</b>, e dura cerca de 1 hora. Você escolhe o dia e o horário direto na agenda da Sabrina.<br><a class="rva-link" href="agendar">Abrir a agenda →</a>');
+      if (NA_AGENDA) { await fala('Você já está na agenda da Sabrina 🙂 É só escolher um dia no calendário: os que têm um ponto dourado estão com horários livres.', 'apresentando'); return opcoes([['Como é a conversa?', 'conversa'], ['Outra dúvida', 'menu']]); }
+      await fala('Que bom! A primeira conversa é <b>online, pelo Google Meet</b>, e dura cerca de 1 hora. Você escolhe o dia e o horário direto na agenda da Sabrina.<br><a class="rva-link" href="agendar">Abrir a agenda →</a>', 'apresentando');
       opcoes([['Como é a conversa?', 'conversa'], ['Outra dúvida', 'menu']]);
     },
     async conversa() {
-      await fala('É um momento para a Sabrina entender o seu negócio:<ol><li><b>Escuta:</b> você conta o momento da marca e o que te trouxe até aqui.</li><li><b>Leitura:</b> vocês olham juntas onde a percepção de valor está se perdendo.</li><li><b>Direção:</b> você sai com clareza sobre o próximo passo.</li></ol>');
+      await fala('É um momento para a Sabrina entender o seu negócio:<ol><li><b>Escuta:</b> você conta o momento da marca e o que te trouxe até aqui.</li><li><b>Leitura:</b> vocês olham juntas onde a percepção de valor está se perdendo.</li><li><b>Direção:</b> você sai com clareza sobre o próximo passo.</li></ol>', 'apresentando');
       opcoes([...(NA_AGENDA ? [] : [['Agendar agora', 'agendar']]), ['Quanto custa?', 'valor'], ['Outra dúvida', 'menu']]);
     },
     async metodo() {
-      await fala('A ROVYA faz <b>gestão estratégica e integrada da comunicação</b>: do posicionamento à experiência do cliente.');
-      await fala('O caminho tem três etapas:<ol><li><b>Entender:</b> diagnóstico do negócio, do que você entrega e de onde o cliente deixa de perceber esse valor.</li><li><b>Organizar:</b> o diagnóstico vira direção: o que muda, o que fica e o que pode crescer.</li><li><b>Posicionar:</b> comunicação, atendimento e experiência na mesma direção.</li></ol>');
+      await fala('A ROVYA faz <b>gestão estratégica e integrada da comunicação</b>: do posicionamento à experiência do cliente.', 'apresentando');
+      await fala('O caminho tem três etapas:<ol><li><b>Entender:</b> diagnóstico do negócio, do que você entrega e de onde o cliente deixa de perceber esse valor.</li><li><b>Organizar:</b> o diagnóstico vira direção: o que muda, o que fica e o que pode crescer.</li><li><b>Posicionar:</b> comunicação, atendimento e experiência na mesma direção.</li></ol>', 'apresentando');
       opcoes([['Para quem é?', 'publico'], ['Quero agendar uma conversa', 'agenda'], ['Outra dúvida', 'menu']]);
     },
     async publico() {
-      await fala('É para quem sente que <b>entrega muito e o mercado percebe pouco</b>: quando a comunicação, o atendimento e a experiência não contam a mesma história sobre a marca.');
+      await fala('É para quem sente que <b>entrega muito e o mercado percebe pouco</b>: quando a comunicação, o atendimento e a experiência não contam a mesma história sobre a marca.', 'cruzados');
       opcoes([['Como funciona o trabalho?', 'metodo'], ['Quero agendar uma conversa', 'agenda'], ['Outra dúvida', 'menu']]);
     },
     async valor() {
-      await fala('Cada projeto é desenhado a partir do diagnóstico do seu negócio, então o valor depende do que a sua marca precisa.');
-      await fala('Na primeira conversa a Sabrina entende o seu momento e, se fizer sentido, te apresenta uma proposta sob medida.');
+      await fala('Cada projeto é desenhado a partir do diagnóstico do seu negócio, então o valor depende do que a sua marca precisa.', 'cruzados');
+      await fala('Na primeira conversa a Sabrina entende o seu momento e, se fizer sentido, te apresenta uma proposta sob medida.', 'cruzados');
       opcoes([['Quero agendar uma conversa', 'agenda'], ['Deixar meu contato', 'contato'], ['Outra dúvida', 'menu']]);
     },
     async contato() {
-      await fala('Perfeito! Deixa seu nome e um jeito de falar com você, que a <b>Sabrina responde pessoalmente</b>.');
+      await fala('Perfeito! Deixa seu nome e um jeito de falar com você, que a <b>Sabrina responde pessoalmente</b>.', 'apresentando');
       acoes.innerHTML = `<form class="rva-form" novalidate>
         <label>Seu nome<input name="nome" autocomplete="name" maxlength="120" required></label>
         <label>WhatsApp ou e-mail<input name="contato" autocomplete="email" maxlength="160" required></label>
@@ -201,7 +221,8 @@
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.erro || 'Não consegui enviar agora.');
       acoes.innerHTML = ''; eu(d.nome.trim() + ' · ' + contato);
-      await fala(`Recebido, ${esc(d.nome.trim().split(' ')[0])}! 💛 A Sabrina vai falar com você ${email ? 'por e-mail' : 'pelo WhatsApp'} em breve.`);
+      await fala(`Recebido, ${esc(d.nome.trim().split(' ')[0])}! 💛 A Sabrina vai falar com você ${email ? 'por e-mail' : 'pelo WhatsApp'} em breve.`, 'comemorando');
+      pose('comemorando', 4);
       opcoes([...(NA_AGENDA ? [] : [['Já quero escolher um horário', 'agendar']]), ['Outra dúvida', 'menu']]);
     } catch (err) { erro.textContent = err.message + ' Tente de novo ou chame no Instagram.'; b.disabled = false; b.textContent = 'Enviar para a Sabrina'; }
   });
@@ -210,10 +231,11 @@
   function abrir() {
     el.classList.add('aberta'); bt.setAttribute('aria-expanded', 'true'); bt.setAttribute('aria-label', 'Fechar conversa'); guardar('rva-dica', '1');
     $('.rva-dica')?.remove();
+    carregarPoses();
     if (!iniciou) { iniciou = true; ir('inicio'); }
     setTimeout(() => (acoes.querySelector('button,a,input') || $('.rva-fechar')).focus({ preventScroll: true }), 420);
   }
-  function fechar() { el.classList.remove('aberta'); bt.setAttribute('aria-expanded', 'false'); bt.setAttribute('aria-label', 'Abrir conversa com a assistente da Sabrina'); }
+  function fechar() { pose('aceno'); el.classList.remove('aberta'); bt.setAttribute('aria-expanded', 'false'); bt.setAttribute('aria-label', 'Abrir conversa com a assistente da Sabrina'); }
   bt.onclick = () => el.classList.contains('aberta') ? fechar() : abrir();
   $('.rva-fechar').onclick = () => { fechar(); bt.focus(); };
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && el.classList.contains('aberta')) { fechar(); bt.focus(); } });
