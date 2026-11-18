@@ -188,6 +188,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 ::view-transition-old(root){z-index:2;-webkit-mask:url(#inkmask);mask:url(#inkmask);animation:hold var(--inkd,1.75s) linear forwards}
 ::view-transition-new(root){z-index:1}
 @keyframes hold{to{outline-color:transparent}} /* só segura a transição viva; não pode ser opacity/transform (iria para a GPU e descompassaria da máscara) */
+/* o avatar do assistente fica no canto: o "Role" sobe para não ficar embaixo dele */
+.scroll-hint{bottom:calc(6vh + 84px)}
 @media (max-width:860px){
   nav ul{display:none}
   .hero{grid-template-columns:1fr}
@@ -588,5 +590,6 @@ if(!still && matchMedia('(pointer:fine)').matches){
   });
 }
 </script>
+<script src="assistente.js" defer></script>
 </body>
 </html>
