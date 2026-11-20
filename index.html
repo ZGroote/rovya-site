@@ -245,14 +245,14 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 
 <header class="hero" id="topo">
   <div class="hero-photo" data-depth="18">
-    <!-- um vídeo por tema (Gemini: gemini/corredor-v4.mp4 escuro, gemini/claro-v2.mp4 claro); toca uma vez e para na pose.
+    <!-- um vídeo por tema (Gemini: gemini/corredor-v4.mp4 escuro, claro: gemini/claro_curto.sh, cortado aos 3 s + IA de nitidez); toca uma vez e para na pose.
          "para" = segundo em que ela termina de andar (as palavras do título se espalham até ali) -->
     <video id="heroVideo" muted playsinline disablepictureinpicture disableremoteplayback controlslist="nodownload noplaybackrate noremoteplayback" aria-label="Sabrina Amorim, fundadora da Rovya Creative"></video>
     <script>
     // celular em pé só mostra o miolo do quadro: usa a versão recortada 540×720 (-m), com menos da metade do peso
     const M=matchMedia('(max-width:860px) and (orientation:portrait)').matches?'-m':'';
     const HERO_VIDEOS={dark:{src:`img/sabrina-corredor${M}.mp4`,poster:`img/sabrina-corredor${M}.jpg`,para:5.4},
-                       light:{src:`img/sabrina-corredor-claro${M}.mp4`,poster:`img/sabrina-corredor-claro${M}.jpg`,para:6.0}};
+                       light:{src:`img/sabrina-corredor-claro${M}.mp4`,poster:`img/sabrina-corredor-claro${M}.jpg`,para:3.0}};
     (()=>{let t;try{t=localStorage.getItem('rovya-tema')}catch(e){}
       const c=HERO_VIDEOS[t==='light'?'light':'dark'],v=document.getElementById('heroVideo');
       v.poster=c.poster;v.src=c.src;v.dataset.para=c.para})();
