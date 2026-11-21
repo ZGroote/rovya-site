@@ -123,6 +123,21 @@ details.ori summary{cursor:pointer;font-size:.8rem;color:var(--gold)}
 .acoes{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
 .alterar{display:grid;gap:.8rem;margin-top:1rem}
 .vazio{color:var(--mute);text-align:center;padding:2.4rem 1rem}
+.quadro{--pad:clamp(1.3rem,3vw,2.2rem);display:flex;gap:.8rem;overflow-x:auto;scroll-snap-type:x proximity;margin:1.2rem calc(-1*var(--pad)) 0;padding:0 var(--pad) .8rem;scroll-padding:0 var(--pad)}
+.coluna{flex:none;width:min(280px,78vw);scroll-snap-align:start;align-self:flex-start;display:grid;gap:.55rem;padding:.8rem;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--bg) 45%,transparent)}
+.coluna h3{font:500 1.12rem/1.2 var(--serif)}
+.coluna header small{color:var(--mute);font-size:.72rem}
+.coluna details.ori{margin:0}
+.cartao{display:grid;gap:.35rem;width:100%;text-align:left;padding:.7rem .8rem;border:1px solid var(--line);border-radius:10px;background:var(--painel);cursor:pointer;transition:border-color .25s,transform .25s}
+.cartao:hover{border-color:var(--gold);transform:translateY(-1px)}
+.cartao:focus-visible,.fechar:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.cartao .t{font-size:.92rem;font-weight:400;line-height:1.35}
+.cartao .meta{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem .6rem;font-size:.72rem;color:var(--mute)}
+.cartao.enviado{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+hr{border:0;border-top:1px solid var(--line);margin:.6rem 0}
+dialog.ficha{width:min(720px,100% - 24px);max-height:90svh;margin:auto;padding:clamp(1.2rem,3vw,2rem);overflow:auto;color:var(--ink);background:var(--bg2);border:1px solid var(--line);border-radius:20px;box-shadow:var(--sombra)}
+dialog.ficha::backdrop{background:rgba(0,0,0,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.fechar{position:sticky;top:0;float:right;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--bg2);cursor:pointer;font-size:1rem;margin:-.4rem -.4rem 0 .6rem}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:.8rem 1.2rem;border-radius:999px;font-size:.86rem;z-index:60;box-shadow:var(--sombra);max-width:calc(100% - 32px)}
 .toast.erro{background:var(--bad);color:#1a0c0e}
 @media (max-width:560px){.nav-dir{gap:.7rem}.link{letter-spacing:.12em}.ent>summary,.ent>.linha{flex-wrap:wrap}.acoes .btn{flex:1}}
@@ -184,6 +199,7 @@ details.ori summary{cursor:pointer;font-size:.8rem;color:var(--gold)}
     <div id="aba"></div>
   </section>
 </main>
+<dialog class="ficha" id="dlgCartao" aria-labelledby="dlgTitulo"><button class="fechar" type="button" aria-label="Fechar">✕</button><div id="dlgCorpo"></div></dialog>
 
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm';
@@ -191,8 +207,12 @@ const SUPA = 'https://jgigosrsyxjqqhckudfe.supabase.co';
 const sb = createClient(SUPA, 'sb_publishable_Y7tQfUBPShG6MIeAEChc5Q_3k2wOB0W');
 const $ = id => document.getElementById(id);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const md = t => esc(t).replace(/^#{1,6}\s*(.+)$/gm, '<b class="tit">$1</b>').replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+const md = t => esc(t).replace(/^#{1,6}\s*(.+)$/gm, '<b class="tit">$1</b>').replace(/^-{3,}\s*$/gm, '<hr>').replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); // --- das descrições do Trello vira linha
 const url = u => /^https?:\/\//i.test(u || '') ? u : null; // nunca javascript: num link
+const SEMANA = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+const dia = d => new Date(d + 'T12:00');
+const dataLonga = d => dia(d).toLocaleDateString('pt-BR') + ' — ' + SEMANA[dia(d).getDay()];
+const diaCurto = d => SEMANA[dia(d).getDay()].slice(0, 3).toLowerCase() + ', ' + dia(d).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
 const data = d => d ? new Date(d.length === 10 ? d + 'T12:00' : d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) : '';
 const STATUS = { a_fazer: 'Planejado', produzindo: 'Em produção', enviado: 'Aguardando sua aprovação', revisao: 'Em ajuste', aprovado: 'Aprovado' };
 const PEDIDO = { a_fazer: 'Recebido', fazendo: 'Em andamento', feita: 'Concluído' };
@@ -263,8 +283,8 @@ async function inicio() {
 }
 
 /* ---------- abas ---------- */
-const entregas = () => D.projetos.flatMap(p => p.etapas.flatMap(e => e.entregas.map(x => ({ ...x, projeto: p.nome, etapa: e.titulo }))));
-const paraAprovar = () => entregas().filter(x => x.status === 'enviado');
+const entregas = () => D.projetos.flatMap(p => p.etapas.flatMap(e => e.entregas.map(x => ({ ...x, projeto: p.nome, etapa: e.titulo, consulta: e.consulta }))));
+const paraAprovar = () => entregas().filter(x => x.status === 'enviado' && !x.consulta);
 document.querySelectorAll('.abas button').forEach(b => b.onclick = () => mostrar(b.dataset.a));
 
 function mostrar(a) {
@@ -276,6 +296,8 @@ function mostrar(a) {
   });
   document.querySelector('.abas .on')?.scrollIntoView({ inline: 'nearest', block: 'nearest' }); // no celular a aba escolhida pode estar fora da tela
   $('aba').innerHTML = `<div class="lista">${({ aprovar, planejamento, arquivos, estrategia, solicitacoes })[a]()}</div>`;
+  // no quadro, já mostra a coluna que tem algo para aprovar
+  document.querySelectorAll('.quadro').forEach(q => { const c = q.querySelector('.cartao.enviado')?.closest('.coluna'); if (c) q.scrollLeft = c.offsetLeft - q.offsetLeft - 8; });
 }
 
 function conteudo(x) {
@@ -285,7 +307,7 @@ function conteudo(x) {
     ${outros.length ? `<ul class="arqs">${outros.map(f => `<li><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.nome)}</a></li>`).join('')}</ul>` : ''}
     ${url(x.link) ? `<a class="btn btn-line" href="${esc(url(x.link))}" target="_blank" rel="noopener">Abrir conteúdo ↗</a>` : ''}</div>`;
 }
-const botoes = x => x.status === 'enviado' ? `<div class="acoes" data-id="${x.id}"><button class="btn btn-gold" data-aprovar>Aprovar</button><button class="btn btn-line" data-alterar>Pedir alteração</button></div>` : '';
+const botoes = x => x.status === 'enviado' && !x.consulta ? `<div class="acoes" data-id="${x.id}"><button class="btn btn-gold" data-aprovar>Aprovar</button><button class="btn btn-line" data-alterar>Pedir alteração</button></div>` : '';
 
 function aprovar() {
   const xs = paraAprovar();
@@ -294,20 +316,30 @@ function aprovar() {
     <div class="cab"><h2>${esc(x.titulo)}</h2>${x.formato ? `<span class="pill">${esc(x.formato)}</span>` : ''}</div>${conteudo(x)}${botoes(x)}</article>`).join('');
 }
 
+// como o Trello: cada etapa é uma coluna, cada entrega um cartão que abre por inteiro
+const SELO = { enviado: 'Para aprovar', aprovado: '✓ Aprovado', revisao: 'Em ajuste', produzindo: 'Em produção', a_fazer: 'Planejado' };
+const selo = x => x.consulta ? ('anexos' in x ? 'Para ler' : 'Em preparação') : SELO[x.status] || '';
+const cartao = x => `<button class="cartao ${x.consulta ? 'consulta' : x.status}" data-cartao="${esc(x.id)}"><span class="t">${esc(x.titulo)}</span>
+  <span class="meta">${x.prazo ? `<span>${diaCurto(x.prazo)}</span>` : ''}${x.anexos?.length ? `<span>📎 ${x.anexos.length}</span>` : ''}<span class="pill ${x.consulta ? '' : x.status}">${selo(x)}</span></span></button>`;
 function planejamento() {
   if (!D.projetos.length) return '<p class="vazio">Seu planejamento aparece aqui assim que a Rovya começar o projeto.</p>';
   return D.projetos.map(p => {
-    const es = p.etapas.flatMap(e => e.entregas), ok = es.filter(x => x.status === 'aprovado').length;
+    const es = p.etapas.filter(e => !e.consulta).flatMap(e => e.entregas), ok = es.filter(x => x.status === 'aprovado').length;
     return `<article class="painel"><div class="cab"><h2>${esc(p.nome)}</h2><span class="pill">${PROJ[p.status] || esc(p.status)}</span></div>
-      <div class="barra"><i style="width:${es.length ? Math.round(100 * ok / es.length) : 0}%"></i></div>
-      <small class="mute">${ok} de ${es.length} entregas aprovadas${p.entrega_prevista ? ' · entrega prevista ' + data(p.entrega_prevista) : ''}</small>
-      ${p.etapas.map((e, i) => `<section class="etapa"><div class="n">ETAPA ${String(i + 1).padStart(2, '0')}</div><h3>${esc(e.titulo)}</h3>
+      ${es.length ? `<div class="barra"><i style="width:${Math.round(100 * ok / es.length)}%"></i></div><small class="mute">${ok} de ${es.length} aprovadas${p.entrega_prevista ? ' · entrega prevista ' + data(p.entrega_prevista) : ''}</small>` : ''}
+      <div class="quadro">${p.etapas.map(e => `<section class="coluna"><header><h3>${esc(e.titulo)}</h3><small>${e.entregas.length} ${e.entregas.length === 1 ? 'cartão' : 'cartões'}</small></header>
         ${e.orientacao ? `<details class="ori"><summary>Orientações da Rovya</summary><div class="txt">${md(e.orientacao)}</div></details>` : ''}
-        ${e.entregas.map(x => {
-          const linha = `<span class="t">${esc(x.titulo)}${x.prazo && x.status !== 'aprovado' ? `<small>até ${data(x.prazo)}</small>` : ''}</span><span class="pill ${x.status}">${STATUS[x.status] || ''}</span>`;
-          return 'anexos' in x ? `<details class="ent"><summary>${linha}</summary>${conteudo(x)}${botoes(x)}</details>` : `<div class="ent"><div class="linha">${linha}</div></div>`;
-        }).join('') || '<p class="mute">Nenhuma entrega nesta etapa ainda.</p>'}</section>`).join('')}</article>`;
+        ${e.entregas.map(x => cartao({ ...x, consulta: e.consulta })).join('') || '<small class="mute">Nada aqui ainda.</small>'}</section>`).join('')}</div></article>`;
   }).join('');
+}
+function abrirCartao(id) {
+  const x = entregas().find(y => y.id === id); if (!x) return;
+  const meta = [x.prazo && `<b>Data:</b> ${dataLonga(x.prazo)}`, x.formato && `<b>Formato:</b> ${esc(x.formato)}`].filter(Boolean).join('<br>');
+  $('dlgCorpo').innerHTML = `<div class="eyebrow">${esc(x.projeto)} · ${esc(x.etapa)}</div><h2 id="dlgTitulo" style="margin:.5rem 0 .4rem">${esc(x.titulo)}</h2>
+    ${x.consulta ? '' : `<span class="pill ${x.status}">${selo(x)}</span>`}${meta ? `<p style="font-size:.9rem;margin:.8rem 0 0">${meta}</p>` : ''}
+    ${'anexos' in x ? conteudo(x) + botoes(x) : `<p class="vazio">${x.consulta ? 'Em preparação.' : 'Em produção.'} Aparece aqui quando a Rovya enviar.</p>`}`;
+  if (!$('dlgCartao').open) $('dlgCartao').showModal();
+  $('dlgCartao').scrollTop = 0;
 }
 
 function arquivos() {
@@ -332,13 +364,14 @@ function solicitacoes() {
     ${D.pedidos.length ? `<article class="painel"><h2>Suas solicitações</h2><div style="margin-top:.8rem">${D.pedidos.map(x => `<div class="ent"><div class="linha"><span class="t">${esc(nome(x.titulo))}<small>${data(x.criado_em)}${x.descricao ? ' · ' + esc(x.descricao.slice(0, 120)) : ''}</small></span><span class="pill ${x.status === 'feita' ? 'aprovado' : ''}">${PEDIDO[x.status] || ''}</span></div></div>`).join('')}</div></article>` : ''}`;
 }
 
-/* ---------- ações (um ouvinte só para a aba toda) ---------- */
+/* ---------- ações (mesmos ouvintes na aba e no cartão aberto) ---------- */
 async function agir(b, acao, dados, ok) {
   b.disabled = true;
-  try { await chamar(acao, dados); toast(ok); D = await chamar('dados'); mostrar(aba); }
+  try { await chamar(acao, dados); toast(ok); D = await chamar('dados'); if ($('dlgCartao').open) $('dlgCartao').close(); mostrar(aba); }
   catch (e) { if (e.message !== 'saiu') toast(e.message, true); b.disabled = false; }
 }
-$('aba').addEventListener('click', e => {
+function clique(e) {
+  const k = e.target.closest('[data-cartao]'); if (k) return abrirCartao(k.dataset.cartao);
   const b = e.target.closest('button'); if (!b) return;
   const caixa = b.closest('[data-id]'), id = caixa?.dataset.id;
   if (b.hasAttribute('data-aprovar')) agir(b, 'aprovar', { entrega_id: id }, 'Aprovado. Obrigada! ✦');
@@ -348,11 +381,17 @@ $('aba').addEventListener('click', e => {
       <div class="acoes" style="margin:0"><button class="btn btn-gold" data-enviar-alteracao>Enviar pedido</button></div></form>`);
     caixa.nextElementSibling.querySelector('textarea').focus();
   }
-});
-$('aba').addEventListener('submit', e => {
+}
+function enviar(e) {
   e.preventDefault(); const f = e.target, b = f.querySelector('button');
   if (f.id === 'fPedido') agir(b, 'pedir', { titulo: f.titulo.value, descricao: f.descricao.value }, 'Solicitação enviada ✦');
   if (f.classList.contains('alterar')) agir(b, 'alterar', { entrega_id: f.dataset.id, comentario: f.comentario.value }, 'Pedido de alteração enviado');
+}
+for (const el of [$('aba'), $('dlgCorpo')]) { el.addEventListener('click', clique); el.addEventListener('submit', enviar); }
+$('dlgCartao').querySelector('.fechar').onclick = () => $('dlgCartao').close();
+$('dlgCartao').addEventListener('click', e => { // clique fora (no fundo escuro) fecha
+  const r = $('dlgCartao').getBoundingClientRect();
+  if (e.target === $('dlgCartao') && (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom)) $('dlgCartao').close();
 });
 
 inicio();
