@@ -191,7 +191,7 @@ dialog.ficha::backdrop{background:rgba(0,0,0,.6);backdrop-filter:blur(4px);-webk
   </section>
 
   <section class="wrap" id="vPortal" hidden>
-    <header class="topo"><div class="eyebrow" id="empresa"></div><h1 id="ola"></h1></header>
+    <header class="topo"><div class="eyebrow" id="empresa"></div><h1 id="ola"></h1><p class="lead" id="frase"></p></header>
     <div class="abas" role="tablist">
       <button data-a="aprovar">Para aprovar</button><button data-a="planejamento">Planejamento</button><button data-a="arquivos">Arquivos</button>
       <button data-a="estrategia">Estratégia</button><button data-a="solicitacoes">Solicitações</button>
@@ -269,6 +269,12 @@ $('trocarSenha').onclick = () => { ver('vSenha'); $('cancelaSenha').hidden = fal
 $('cancelaSenha').onclick = () => inicio();
 $('sair').onclick = async () => { await sb.auth.signOut(); D = null; ver('vEntrar'); };
 
+// frase embaixo do "Olá": uma por dia, a mesma o dia todo (frases da Sabrina)
+const FRASES = ['Tudo o que estamos construindo para sua marca, em um só lugar.', 'Sua marca em movimento. Acompanhe cada etapa por aqui.',
+  'Um espaço para acompanhar ideias, decisões e resultados.', 'Sua comunicação, seus projetos e nossos próximos passos.',
+  'Por aqui, cada detalhe da sua marca tem direção.', 'Boas-vindas ao espaço onde sua marca ganha forma.', 'Acompanhe de perto tudo o que estamos criando juntos.'];
+const fraseDoDia = (d = new Date()) => FRASES[Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5) % FRASES.length];
+
 async function inicio() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) return ver('vEntrar');
@@ -277,6 +283,7 @@ async function inicio() {
   const nome = (D.cliente.nome || '').split(' ')[0];
   $('empresa').textContent = D.cliente.empresa || 'Portal do cliente';
   $('ola').innerHTML = `Olá${nome ? ', <em>' + esc(nome) + '</em>' : ''}`;
+  $('frase').textContent = fraseDoDia();
   ver('vPortal');
   const qual = location.hash.slice(1);
   mostrar(document.querySelector(`.abas [data-a="${qual}"]`) ? qual : aba || (paraAprovar().length ? 'aprovar' : 'planejamento'));
