@@ -19,7 +19,6 @@
     transition:transform .35s cubic-bezier(.2,.8,.2,1);animation:rva-entra .9s 1.2s cubic-bezier(.2,.8,.2,1) both}
   .rva-bt:hover{transform:translateY(-4px) scale(1.03)}
   .rva.rva-pequena .rva-bt{width:120px;height:130px}  /* na agenda: menor, para não cobrir o painel */
-  .rva.rva-pequena .rva-dica{right:104px;bottom:76px}
   .rva.rva-pequena .rva-jan{bottom:146px}
   .rva-bt video,.rva-bt img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;object-position:bottom;display:block;filter:drop-shadow(0 10px 16px rgba(0,0,0,.35))}
   .rva-bt img.rva-flutua{animation:rva-flutua 3.2s ease-in-out infinite;transform-origin:50% 100%}
@@ -240,12 +239,13 @@
   $('.rva-fechar').onclick = () => { fechar(); bt.focus(); };
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && el.classList.contains('aberta')) { fechar(); bt.focus(); } });
 
-  // convite discreto depois de alguns segundos (uma vez por visita)
-  if (!lido('rva-dica')) setTimeout(() => {
+  // convite discreto depois de alguns segundos (uma vez por visita). Na agenda, não: o balão cobria o painel de horários
+  // (ela acenando no canto já convida)
+  if (!NA_AGENDA && !lido('rva-dica')) setTimeout(() => {
     if (el.classList.contains('aberta') || lido('rva-dica')) return;
     const d = document.createElement('div'); d.className = 'rva-dica'; d.setAttribute('role', 'status');
-    d.innerHTML = `<b>Oi! Sou a assistente da Sabrina.</b>${NA_AGENDA ? 'Alguma dúvida antes de agendar?' : 'Posso te ajudar?'}<button type="button" aria-label="Dispensar">×</button>`;
+    d.innerHTML = `<b>Oi! Sou a assistente da Sabrina.</b>Posso te ajudar?<button type="button" aria-label="Dispensar">×</button>`;
     d.onclick = e => { if (e.target.closest('button')) { d.remove(); guardar('rva-dica', '1'); } else abrir(); };
     el.append(d);
-  }, NA_AGENDA ? 9000 : 7000);
+  }, 7000);
 })();
