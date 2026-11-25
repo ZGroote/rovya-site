@@ -20,7 +20,7 @@
   .rva-bt:hover{transform:translateY(-4px) scale(1.03)}
   .rva.rva-pequena .rva-bt{width:120px;height:130px}  /* na agenda: menor, para não cobrir o painel */
   .rva.rva-pequena .rva-jan{bottom:146px}
-  .rva-bt video,.rva-bt img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;object-position:bottom;display:block;filter:drop-shadow(0 10px 16px rgba(0,0,0,.35))}
+  .rva-bt canvas,.rva-bt img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;object-position:bottom;display:block;filter:drop-shadow(0 10px 16px rgba(0,0,0,.35))}
   .rva-bt img.rva-flutua{animation:rva-flutua 3.2s ease-in-out infinite;transform-origin:50% 100%}
   .rva-bt .rva-pose{position:absolute;inset:0;z-index:1;opacity:0;transition:opacity .22s;pointer-events:none}
   .rva-bt.com-pose .rva-pose{opacity:1;animation:rva-pop .45s cubic-bezier(.2,1.4,.4,1)}
@@ -116,9 +116,13 @@
     const safari = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
     const parado = $('.rva-mascote');
     if (safari || !document.createElement('video').canPlayType('video/webm; codecs="vp9"')) return parado.classList.add('rva-flutua');
-    const v = Object.assign(document.createElement('video'), { muted: true, loop: true, autoplay: true, playsInline: true, src: 'img/sabrina-aceno.webm' });
-    v.setAttribute('aria-hidden', 'true'); v.disablePictureInPicture = true; v.className = 'rva-base';
-    v.addEventListener('playing', () => parado.replaceWith(v), { once: true }); v.play().catch(() => parado.classList.add('rva-flutua'));
+    // o vídeo fica fora da página e é desenhado num canvas: com <video> na tela o Opera põe o botão "pop-out" em cima da cabeça dela
+    const v = Object.assign(document.createElement('video'), { muted: true, loop: true, playsInline: true, src: 'img/sabrina-aceno.webm' });
+    const c = Object.assign(document.createElement('canvas'), { className: 'rva-base' }), g = c.getContext('2d');
+    c.setAttribute('aria-hidden', 'true');
+    const quadro = () => { if (!c.isConnected) return v.pause(); g.clearRect(0, 0, c.width, c.height); g.drawImage(v, 0, 0, c.width, c.height); requestAnimationFrame(quadro); };
+    v.addEventListener('playing', () => { c.width = v.videoWidth; c.height = v.videoHeight; parado.replaceWith(c); quadro(); }, { once: true });
+    v.play().catch(() => parado.classList.add('rva-flutua'));
   };
   (document.readyState === 'complete' ? Promise.resolve() : new Promise(r => addEventListener('load', r, { once: true }))).then(() => setTimeout(animar, 800));
   const espera = ms => new Promise(r => setTimeout(r, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : ms));

@@ -80,6 +80,12 @@ h1 em{text-transform:none}
 .detalhes{list-style:none;display:flex;flex-wrap:wrap;gap:.6rem 1.6rem;margin:1.8rem 0 0;padding:1.2rem 0;border-block:1px solid var(--line);font-size:.86rem}
 .detalhes li{display:flex;align-items:center;gap:.55rem}
 .detalhes svg{width:17px;height:17px;stroke:var(--gold);flex:none}
+.perfil{display:flex;flex-wrap:wrap;gap:.2rem 1.2rem}
+.perfil button{background:none;border:0;padding:.2rem 0;text-transform:inherit;letter-spacing:inherit;cursor:pointer;color:var(--mute);border-bottom:1px solid transparent;transition:color .3s,border-color .3s}
+.perfil button:hover{color:var(--ink)}
+.perfil button[aria-pressed=true]{color:var(--gold);border-bottom-color:var(--gold)}
+.perfil button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.cliente .so-novo,body:not(.cliente) .so-cliente{display:none!important}
 .roteiro{list-style:none;margin-top:.4rem}
 .roteiro li{display:grid;grid-template-columns:2.6rem 1fr;gap:.4rem;padding:1.15rem 0;border-bottom:1px solid var(--line)}
 .roteiro i{font-style:normal;font-size:.68rem;letter-spacing:.2em;color:var(--gold);padding-top:.45rem}
@@ -319,18 +325,27 @@ footer a:hover{color:var(--gold)}
       <figcaption class="selo"><b>Sabrina Amorim</b>Fundadora · ROVYA Creative</figcaption>
     </figure>
     <div class="sobre">
-      <div class="eyebrow surge" style="animation-delay:.1s">Primeira conversa</div>
-      <h1><span class="l"><span>Vamos falar</span></span><span class="l"><span>sobre a sua</span></span><span class="l"><span><em>marca.</em></span></span></h1>
-      <p class="lead surge" style="animation-delay:.45s">Uma conversa para eu entender o seu negócio, enxergar onde o valor que você entrega está se perdendo e mostrar qual pode ser o próximo passo.</p>
+      <div class="eyebrow perfil surge" style="animation-delay:.1s" role="group" aria-label="Que conversa você quer marcar">
+        <button type="button" data-perfil="novo" aria-pressed="true">Primeira conversa</button><button type="button" data-perfil="cliente" aria-pressed="false">Já sou cliente</button>
+      </div>
+      <h1 class="so-novo"><span class="l"><span>Vamos falar</span></span><span class="l"><span>sobre a sua</span></span><span class="l"><span><em>marca.</em></span></span></h1>
+      <h1 class="so-cliente"><span class="l"><span>Vamos alinhar</span></span><span class="l"><span>os próximos</span></span><span class="l"><span><em>passos.</em></span></span></h1>
+      <p class="lead surge so-novo" style="animation-delay:.45s">Uma conversa para eu entender o seu negócio, enxergar onde o valor que você entrega está se perdendo e mostrar qual pode ser o próximo passo.</p>
+      <p class="lead surge so-cliente" style="animation-delay:.45s">Um momento nosso para olhar o que já construímos, ajustar o que for preciso e decidir juntos o que vem agora para a sua marca.</p>
       <ul class="detalhes surge" style="animation-delay:.6s">
         <li><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span id="duracao">Cerca de 1 hora</span></li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/></svg>Online, pelo Google Meet</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Convite no seu e-mail</li>
       </ul>
-      <ol class="roteiro surge" style="animation-delay:.75s">
+      <ol class="roteiro surge so-novo" style="animation-delay:.75s">
         <li><i>01</i><div><h3>Escuta</h3><p>Você me conta o momento da marca e o que te trouxe até aqui.</p></div></li>
         <li><i>02</i><div><h3>Leitura</h3><p>Olhamos juntos onde a percepção de valor está se perdendo.</p></div></li>
         <li><i>03</i><div><h3>Direção</h3><p>Você sai com clareza sobre o próximo passo da sua marca.</p></div></li>
+      </ol>
+      <ol class="roteiro surge so-cliente" style="animation-delay:.75s">
+        <li><i>01</i><div><h3>Panorama</h3><p>Olhamos o que foi feito e como a sua marca está respondendo.</p></div></li>
+        <li><i>02</i><div><h3>Ajustes</h3><p>Você traz o que mudou no negócio, dúvidas e novas ideias.</p></div></li>
+        <li><i>03</i><div><h3>Próximo ciclo</h3><p>Saímos com prioridades claras para a próxima etapa.</p></div></li>
       </ol>
     </div>
   </aside>
@@ -385,16 +400,21 @@ footer a:hover{color:var(--gold)}
             <label class="campo">Marca ou empresa <span class="opcional">· opcional</span><input name="empresa" autocomplete="organization" maxlength="120"><span class="msg"></span></label>
           </div>
           <fieldset>
-            <legend>O que te traz aqui <span class="opcional">· pode marcar mais de um</span></legend>
+            <legend><span class="so-novo">O que te traz aqui</span><span class="so-cliente">Assuntos da conversa</span> <span class="opcional">· pode marcar mais de um</span></legend>
             <div class="chips" id="motivos">
-              <button type="button" class="chip" aria-pressed="false">Posicionar a marca</button>
-              <button type="button" class="chip" aria-pressed="false">Mudar como sou percebida(o)</button>
-              <button type="button" class="chip" aria-pressed="false">Organizar a comunicação</button>
-              <button type="button" class="chip" aria-pressed="false">Atendimento e experiência</button>
-              <button type="button" class="chip" aria-pressed="false">Ainda não sei</button>
+              <button type="button" class="chip so-novo" aria-pressed="false">Posicionar a marca</button>
+              <button type="button" class="chip so-novo" aria-pressed="false">Mudar como sou percebida(o)</button>
+              <button type="button" class="chip so-novo" aria-pressed="false">Organizar a comunicação</button>
+              <button type="button" class="chip so-novo" aria-pressed="false">Atendimento e experiência</button>
+              <button type="button" class="chip so-novo" aria-pressed="false">Ainda não sei</button>
+              <button type="button" class="chip so-cliente" aria-pressed="false">Revisar resultados</button>
+              <button type="button" class="chip so-cliente" aria-pressed="false">Ajustar a estratégia</button>
+              <button type="button" class="chip so-cliente" aria-pressed="false">Dúvidas sobre as entregas</button>
+              <button type="button" class="chip so-cliente" aria-pressed="false">Novo projeto ou serviço</button>
+              <button type="button" class="chip so-cliente" aria-pressed="false">Outro assunto</button>
             </div>
           </fieldset>
-          <label class="campo">Conte um pouco do momento da sua marca <span class="opcional">· opcional</span><textarea name="mensagem" rows="2" maxlength="1800"></textarea></label>
+          <label class="campo"><span class="so-novo">Conte um pouco do momento da sua marca</span><span class="so-cliente">Sobre o que você quer conversar?</span> <span class="opcional">· opcional</span><textarea name="mensagem" rows="2" maxlength="1800"></textarea></label>
           <label class="escondido" aria-hidden="true">Site<input name="site" tabindex="-1" autocomplete="off"></label>
           <p class="aviso-geral" id="avisoGeral" role="alert"></p>
           <button class="btn btn-gold enviar" id="enviar"><span class="gira" aria-hidden="true"></span><span class="rotulo">Confirmar conversa →</span></button>
@@ -446,6 +466,17 @@ $('tema').onclick = () => {
   const t = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
   document.documentElement.dataset.theme = t; try { localStorage.setItem('rovya-tema', t); } catch (e) { }
 };
+
+// primeira conversa × já é cliente (?cliente no link já abre como cliente)
+const TITULO = { novo: 'Primeira conversa', cliente: 'Conversa de alinhamento' };
+let perfil = 'novo';
+function escolherPerfil(p) {
+  perfil = p; document.body.classList.toggle('cliente', p === 'cliente');
+  document.querySelectorAll('.perfil button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.perfil === p)));
+  document.title = TITULO[p] + ' | ROVYA Creative';
+}
+document.querySelectorAll('.perfil button').forEach(b => b.onclick = () => escolherPerfil(b.dataset.perfil));
+if (new URLSearchParams(location.search).has('cliente')) escolherPerfil('cliente');
 
 async function chamar(corpo) {
   const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) });
@@ -545,11 +576,11 @@ $('f').onsubmit = async ev => {
   const okNome = erroCampo('nome', d.nome.trim().length < 2 ? 'Como posso te chamar?' : '');
   const okEmail = erroCampo('email', !/^[^@\s,;<>]+@[^@\s,;<>]+\.[^@\s,;<>]{2,}$/.test(d.email.trim()) ? 'Confira o e-mail: é por ele que chega o convite.' : '');
   if (!okNome || !okEmail) return f[okNome ? 'email' : 'nome'].focus();
-  const motivos = [...document.querySelectorAll('#motivos [aria-pressed=true]')].map(c => c.textContent);
+  const motivos = [...document.querySelectorAll(`#motivos .so-${perfil}[aria-pressed=true]`)].map(c => c.textContent);
   const mensagem = [motivos.length && `Interesse: ${motivos.join(', ')}`, d.mensagem.trim()].filter(Boolean).join('\n\n');
   const b = $('enviar'); b.disabled = true; b.classList.add('carregando'); b.querySelector('.rotulo').textContent = 'Confirmando…'; $('avisoGeral').textContent = '';
   try {
-    const r = await chamar({ acao: 'reservar', inicio: escolhido.inicio, nome: d.nome.trim(), email: d.email.trim(), telefone: d.telefone.trim(), empresa: d.empresa.trim(), mensagem, site: d.site });
+    const r = await chamar({ acao: 'reservar', inicio: escolhido.inicio, nome: d.nome.trim(), email: d.email.trim(), telefone: d.telefone.trim(), empresa: d.empresa.trim(), mensagem, site: d.site, cliente: perfil === 'cliente' });
     confirmado({ ...escolhido, ...(r.inicio ? { inicio: r.inicio, fim: r.fim || escolhido.fim } : {}) }, d.email.trim(), r.meet);
   } catch (e) {
     if (e.status === 409 && /indisponível|preenchido/.test(e.message)) {   // alguém pegou antes: volta para a escolha com a lista atualizada
@@ -562,9 +593,9 @@ $('f').onsubmit = async ev => {
 // ---- 3. pronto ----
 const GUARDADO = 'rovya-agendamento';   // o convidado que recarrega ou volta depois ainda vê a confirmação e o link do Meet
 function confirmado(h, email, meet, festa = true) {
-  try { localStorage.setItem(GUARDADO, JSON.stringify({ inicio: h.inicio, fim: h.fim, email, meet })); } catch (e) { }
+  try { localStorage.setItem(GUARDADO, JSON.stringify({ inicio: h.inicio, fim: h.fim, email, meet, perfil })); } catch (e) { }
   const z = d => new Date(d).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-  const titulo = 'Primeira conversa · ROVYA Creative', nota = meet ? 'Link do Google Meet: ' + meet : 'O link do Google Meet está no convite enviado por e-mail.';
+  const titulo = TITULO[perfil] + ' · ROVYA Creative', nota = meet ? 'Link do Google Meet: ' + meet : 'O link do Google Meet está no convite enviado por e-mail.';
   $('pGoogle').href = 'https://calendar.google.com/calendar/render?' + new URLSearchParams({ action: 'TEMPLATE', text: titulo, dates: `${z(h.inicio)}/${z(h.fim)}`, details: nota, location: meet || 'Google Meet' });
   $('pQuando').textContent = `${fmt(h.inicio, { weekday: 'long', day: 'numeric', month: 'long' })}, às ${hora(h.inicio)}`;
   $('pEmail').textContent = email;
@@ -584,7 +615,8 @@ function confirmado(h, email, meet, festa = true) {
 $('pNovo').onclick = ev => { ev.preventDefault(); try { localStorage.removeItem(GUARDADO); } catch (e) { } carregar(); };
 $('fTentar').onclick = carregar;
 let salvo = null; try { salvo = JSON.parse(localStorage.getItem(GUARDADO)); } catch (e) { }
-if (salvo?.inicio && new Date(salvo.fim) > new Date()) confirmado(salvo, salvo.email, salvo.meet, false);
+if (salvo?.inicio && new Date(salvo.fim) > new Date()) { if (salvo.perfil) escolherPerfil(salvo.perfil); } else salvo = null;
+if (salvo) confirmado(salvo, salvo.email, salvo.meet, false);
 else { try { localStorage.removeItem(GUARDADO); } catch (e) { } carregar(); }
 </script>
 <script src="assistente.js" defer></script>
