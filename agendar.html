@@ -68,7 +68,7 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:8
   border:1px solid var(--line);padding:.6rem 1rem;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase}
 .selo b{display:block;font:italic 400 1.15rem/1.1 var(--serif);letter-spacing:0;text-transform:none;color:var(--gold2)}
 .sobre{position:relative;margin-top:-12.5rem;padding:0 1.6rem}
-.sobre .lead,.sobre .detalhes,.sobre .roteiro{margin-left:-1.6rem;margin-right:-1.6rem}
+.sobre .lead,.sobre .chamada,.sobre .detalhes,.sobre .roteiro{margin-left:-1.6rem;margin-right:-1.6rem}
 .sobre .lead{margin-top:2.2rem}
 h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.6rem,4.6vw,4.3rem);line-height:.95;text-transform:uppercase;margin:1rem 0 1.4rem;letter-spacing:.01em}
 h1 .l{display:block;overflow:hidden;padding-bottom:.06em}
@@ -80,7 +80,8 @@ h1 em{text-transform:none}
 .detalhes{list-style:none;display:flex;flex-wrap:wrap;gap:.6rem 1.6rem;margin:1.8rem 0 0;padding:1.2rem 0;border-block:1px solid var(--line);font-size:.86rem}
 .detalhes li{display:flex;align-items:center;gap:.55rem}
 .detalhes svg{width:17px;height:17px;stroke:var(--gold);flex:none}
-.perfil{display:flex;flex-wrap:wrap;gap:.2rem 1.2rem}
+.perfil{display:flex;flex-wrap:wrap;gap:.2rem 1.2rem;margin-top:.7rem}
+.chamada{color:var(--ink);font-size:.95rem;margin-top:.8rem}
 .perfil button{background:none;border:0;padding:.2rem 0;text-transform:inherit;letter-spacing:inherit;cursor:pointer;color:var(--mute);border-bottom:1px solid transparent;transition:color .3s,border-color .3s}
 .perfil button:hover{color:var(--ink)}
 .perfil button[aria-pressed=true]{color:var(--gold);border-bottom-color:var(--gold)}
@@ -240,9 +241,9 @@ footer a:hover{color:var(--gold)}
   .foto img{object-position:50% 18%}
   .foto::after{background:linear-gradient(0deg,var(--bg) 0%,color-mix(in srgb,var(--bg) 88%,transparent) 30%,color-mix(in srgb,var(--bg) 25%,transparent) 62%,transparent 80%)}
   .sobre{margin:0;padding:clamp(1.4rem,3vh,2.4rem) clamp(1.4rem,2.4vw,2.4rem)}
-  .sobre .lead,.sobre .detalhes{margin-left:0;margin-right:0}
+  .sobre .lead,.sobre .chamada,.sobre .detalhes{margin-left:0;margin-right:0}
   .sobre .lead{margin-top:0;font-size:.95rem}
-  h1{font-size:clamp(2.3rem,min(3.5vw,8vh),3.9rem);margin:.7rem 0 1rem}
+  h1{font-size:clamp(2.1rem,min(3vw,7vh),3.4rem);margin:.7rem 0 1rem}
   .detalhes{margin-top:1.2rem;padding:.9rem 0 0;border-bottom:0}
   .roteiro{display:none}
   .reserva{min-height:0;height:100%}
@@ -293,7 +294,7 @@ footer a:hover{color:var(--gold)}
   .foto::after{background:linear-gradient(0deg,var(--bg) 2%,color-mix(in srgb,var(--bg) 45%,transparent) 38%,transparent 70%)}
   .selo{display:none}
   .sobre{margin-top:-9rem;padding:0}
-  .sobre .lead,.sobre .detalhes{margin-left:0;margin-right:0}
+  .sobre .lead,.sobre .chamada,.sobre .detalhes{margin-left:0;margin-right:0}
   .sobre .lead{margin-top:0}
   .roteiro{display:none}
   .dupla{grid-template-columns:1fr}
@@ -325,17 +326,20 @@ footer a:hover{color:var(--gold)}
       <figcaption class="selo"><b>Sabrina Amorim</b>Fundadora · ROVYA Creative</figcaption>
     </figure>
     <div class="sobre">
+      <div class="eyebrow surge" style="animation-delay:.05s">Agenda Rovya</div>
       <div class="eyebrow perfil surge" style="animation-delay:.1s" role="group" aria-label="Que conversa você quer marcar">
         <button type="button" data-perfil="novo" aria-pressed="true">Primeira conversa</button><button type="button" data-perfil="cliente" aria-pressed="false">Já sou cliente</button>
       </div>
-      <h1 class="so-novo"><span class="l"><span>Vamos falar</span></span><span class="l"><span>sobre a sua</span></span><span class="l"><span><em>marca.</em></span></span></h1>
-      <h1 class="so-cliente"><span class="l"><span>Vamos alinhar</span></span><span class="l"><span>os próximos</span></span><span class="l"><span><em>passos.</em></span></span></h1>
-      <p class="lead surge so-novo" style="animation-delay:.45s">Uma conversa para eu entender o seu negócio, enxergar onde o valor que você entrega está se perdendo e mostrar qual pode ser o próximo passo.</p>
-      <p class="lead surge so-cliente" style="animation-delay:.45s">Um momento nosso para olhar o que já construímos, ajustar o que for preciso e decidir juntos o que vem agora para a sua marca.</p>
+      <h1 class="so-novo"><span class="l"><span>Vamos conversar</span></span><span class="l"><span>sobre o seu</span></span><span class="l"><span><em>negócio.</em></span></span></h1>
+      <h1 class="so-cliente"><span class="l"><span>Estratégia é uma</span></span><span class="l"><span>construção</span></span><span class="l"><span><em>contínua.</em></span></span></h1>
+      <p class="lead surge so-novo" style="animation-delay:.45s">Um espaço dedicado a conversas estratégicas, alinhamentos, novos projetos e decisões importantes para a evolução da sua marca.</p>
+      <p class="chamada surge so-novo" style="animation-delay:.5s">Escolha o melhor horário para conversarmos.</p>
+      <p class="lead surge so-cliente" style="animation-delay:.45s">Um espaço dedicado aos nossos clientes para alinhamentos estratégicos, acompanhamento de projetos, novas demandas e decisões sobre os próximos passos da sua marca.</p>
+      <p class="chamada surge so-cliente" style="animation-delay:.5s">Reserve um horário na nossa agenda.</p>
       <ul class="detalhes surge" style="animation-delay:.6s">
         <li><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span id="duracao">Cerca de 1 hora</span></li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/></svg>Online, pelo Google Meet</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Convite no seu e-mail</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Convite enviado por e-mail</li>
       </ul>
       <ol class="roteiro surge so-novo" style="animation-delay:.75s">
         <li><i>01</i><div><h3>Escuta</h3><p>Você me conta o momento da marca e o que te trouxe até aqui.</p></div></li>

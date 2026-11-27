@@ -124,6 +124,9 @@ details.ori summary{cursor:pointer;font-size:.8rem;color:var(--gold)}
 .imgs img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:10px;border:1px solid var(--line);display:block}
 .arqs{list-style:none;display:grid;gap:.3rem;margin:.4rem 0}
 .arqs a{color:var(--gold);text-underline-offset:3px}
+.imgs figure{margin:0;display:grid;gap:.35rem}
+a.baixar{font-size:.78rem;color:var(--gold);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:.15rem .7rem;justify-self:start;white-space:nowrap}
+a.baixar:hover{border-color:var(--gold)}
 .acoes{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
 .alterar{display:grid;gap:.8rem;margin-top:1rem}
 .vazio{color:var(--mute);text-align:center;padding:2.4rem 1rem}
@@ -492,11 +495,13 @@ function mostrar(a) {
   document.querySelectorAll('.quadro').forEach(q => { const c = q.querySelector('.cartao.enviado')?.closest('.coluna'); if (c) q.scrollLeft = c.offsetLeft - q.offsetLeft - 8; });
 }
 
+// link assinado do Supabase com ?download= vem como anexo: o navegador baixa em vez de abrir
+const baixar = f => `<a class="baixar" href="${esc(f.url + (f.url.includes('?') ? '&' : '?') + 'download=' + encodeURIComponent(f.nome))}" download="${esc(f.nome)}" aria-label="Baixar ${esc(f.nome)}">↓ Baixar</a>`;
 function conteudo(x) {
   const imgs = (x.anexos || []).filter(f => f.url && IMG.test(f.nome)), outros = (x.anexos || []).filter(f => f.url && !IMG.test(f.nome));
   return `<div class="conteudo">${x.texto ? `<div class="txt">${md(x.texto)}</div>` : ''}
-    ${imgs.length ? `<div class="imgs">${imgs.map(f => `<a href="${esc(f.url)}" target="_blank" rel="noopener"><img src="${esc(f.url)}" alt="${esc(f.nome)}" loading="lazy"></a>`).join('')}</div>` : ''}
-    ${outros.length ? `<ul class="arqs">${outros.map(f => `<li><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.nome)}</a></li>`).join('')}</ul>` : ''}
+    ${imgs.length ? `<div class="imgs">${imgs.map(f => `<figure><a href="${esc(f.url)}" target="_blank" rel="noopener"><img src="${esc(f.url)}" alt="${esc(f.nome)}" loading="lazy"></a>${baixar(f)}</figure>`).join('')}</div>` : ''}
+    ${outros.length ? `<ul class="arqs">${outros.map(f => `<li><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.nome)}</a> ${baixar(f)}</li>`).join('')}</ul>` : ''}
     ${url(x.link) ? `<a class="btn btn-line" href="${esc(url(x.link))}" target="_blank" rel="noopener">Abrir conteúdo ↗</a>` : ''}</div>`;
 }
 const botoes = x => x.status === 'enviado' && !x.consulta ? `<div class="acoes" data-id="${x.id}"><button class="btn btn-gold" data-aprovar>Aprovar</button><button class="btn btn-line" data-alterar>Pedir alteração</button></div>` : '';
@@ -537,7 +542,7 @@ function abrirCartao(id) {
 function arquivos() {
   const blocos = D.projetos.map(p => {
     const fs = p.etapas.flatMap(e => e.entregas.flatMap(x => (x.anexos || []).filter(f => f.url).map(f => ({ ...f, entrega: x.titulo }))));
-    return fs.length ? `<article class="painel"><h2>${esc(p.nome)}</h2><ul class="arqs" style="margin-top:1rem">${fs.map(f => `<li class="ent"><div class="linha"><span class="t"><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.nome)}</a><small>${esc(f.entrega)}${f.tamanho ? ' · ' + (f.tamanho / 1048576).toFixed(1) + ' MB' : ''}</small></span></div></li>`).join('')}</ul></article>` : '';
+    return fs.length ? `<article class="painel"><h2>${esc(p.nome)}</h2><ul class="arqs" style="margin-top:1rem">${fs.map(f => `<li class="ent"><div class="linha"><span class="t"><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.nome)}</a><small>${esc(f.entrega)}${f.tamanho ? ' · ' + (f.tamanho / 1048576).toFixed(1) + ' MB' : ''}</small></span>${baixar(f)}</div></li>`).join('')}</ul></article>` : '';
   }).join('');
   return blocos || '<p class="vazio">Os arquivos aparecem aqui quando a Rovya enviar as entregas.</p>';
 }

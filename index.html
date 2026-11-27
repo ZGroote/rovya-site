@@ -122,18 +122,26 @@ section{position:relative}
 /* método */
 .method{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
 .method-photo{position:relative;aspect-ratio:3/4;border-radius:4px;overflow:hidden}
+@media (min-width:861px){.method-photo{position:sticky;top:6rem;align-self:start}}
 .method-photo img{width:100%;height:120%;object-fit:cover;will-change:transform}
 .method-photo .tag{position:absolute;left:1.2rem;bottom:1.2rem;background:color-mix(in srgb,var(--bg) 75%,transparent);color:var(--ink);backdrop-filter:blur(8px);border:1px solid var(--line);padding:.6rem 1rem;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase}
 .steps{margin-top:2.5rem;border-top:1px solid var(--line)}
-.step{display:grid;grid-template-columns:3rem 1fr 2rem;gap:1rem;align-items:center;padding:1.4rem 0;border-bottom:1px solid var(--line);cursor:default}
+.step{display:grid;grid-template-columns:3rem 1fr 2rem;gap:1rem;align-items:center;padding:1.4rem 0;border-bottom:1px solid var(--line);cursor:pointer}
+.step:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.step small{display:block;font-size:.86rem;color:var(--gold2);margin-top:.2rem}
 .step i{font-style:normal;font-size:.7rem;color:var(--gold);letter-spacing:.2em}
 .step h3{font-family:var(--serif);font-weight:400;font-size:1.6rem;line-height:1.1}
 /* um de cada vez: abre em .8s (segura a atenção), fecha em .4s, acelerando, de uma vez */
-.step>div{display:grid;grid-template-rows:auto 0fr;transition:grid-template-rows .4s cubic-bezier(.6,0,1,1)}
-.step.open>div{grid-template-rows:auto 1fr;transition:grid-template-rows .8s cubic-bezier(.2,.8,.2,1)}
-.step p{font-size:.92rem;color:var(--mute);min-height:0;overflow:hidden;opacity:0;transition:opacity .2s}
-.step.open p{opacity:1;transition:opacity .6s .15s}
-.step p::before{content:"";display:block;height:.4rem}
+.step>div{display:grid;grid-template-rows:auto auto 0fr;transition:grid-template-rows .4s cubic-bezier(.6,0,1,1)}
+.step.open>div{grid-template-rows:auto auto 1fr;transition:grid-template-rows .8s cubic-bezier(.2,.8,.2,1)}
+.step .mais{font-size:.92rem;color:var(--mute);min-height:0;overflow:hidden;opacity:0;transition:opacity .2s}
+.step .mais ul{margin:.6rem 0 0;padding-left:1.1rem}
+.step .mais li::marker{color:var(--gold)}
+.method .intro p{color:var(--mute);max-width:32rem;margin-bottom:.8rem}
+.fecho{font-family:var(--serif);font-size:1.35rem;line-height:1.35;margin-top:2rem;max-width:32rem}
+.fecho span{display:block;font-family:var(--sans);font-size:.7rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-top:.8rem}
+.step.open .mais{opacity:1;transition:opacity .6s .15s}
+.step .mais::before{content:"";display:block;height:.6rem}
 .check{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;transition:background .5s,border-color .5s}
 .check svg{width:13px;opacity:0;transform:scale(.4);transition:.5s}
 .step.done .check{background:var(--gold);border-color:var(--gold)}
@@ -160,11 +168,12 @@ section{position:relative}
 .about-photos{position:relative;height:640px}
 .about-photos figure{position:absolute;overflow:hidden;border-radius:4px;box-shadow:0 30px 70px rgba(0,0,0,.6)}
 .about-photos .a{inset:0 22% 12% 0}
-.about-photos .b{width:48%;aspect-ratio:774/1080;right:0;bottom:0;border:6px solid var(--bg)}
+.about-photos .b{width:48%;aspect-ratio:4/5;right:0;bottom:0;border:6px solid var(--bg)}
 .about-photos img{width:100%;height:100%;object-fit:cover}
 .about blockquote{font-family:var(--serif);font-size:clamp(1.5rem,2.6vw,2.1rem);line-height:1.3;margin:1.5rem 0}
 .about p{color:var(--mute);margin-bottom:1rem;max-width:34rem}
 .sign{font-family:var(--serif);font-style:italic;font-size:1.8rem;color:var(--gold2);margin-top:1.6rem}
+.cargo{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);line-height:1.9;margin-top:.4rem}
 
 /* CTA */
 .cta{padding:20vh 0;text-align:center;position:relative}
@@ -274,10 +283,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 </header>
 
 <div class="stats"><div class="wrap">
-  <div><b>Estratégia</b><span>Antes da estética</span></div>
-  <div><b>Comunicação</b><span>Com direção</span></div>
-  <div><b>Experiência</b><span>Em cada contato</span></div>
-  <div><b>Marca</b><span>Percebida pelo valor</span></div>
+  <div><b>Estratégia</b><span>Antes de qualquer decisão</span></div>
+  <div><b>Posicionamento</b><span>Com clareza e identidade</span></div>
+  <div><b>Comunicação</b><span>Com intenção e direção</span></div>
+  <div><b>Valor</b><span>Reconhecido pelo mercado</span></div>
 </div></div>
 
 <section class="kinetic">
@@ -302,12 +311,20 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     <div class="reveal">
       <div class="eyebrow">O método</div>
       <h2>Entender antes de <em>criar.</em></h2>
-      <p style="color:var(--mute);max-width:32rem">Estratégia não começa com uma nova logo, um feed diferente ou mais uma campanha. Começa com perguntas. Olhamos para o negócio como um todo para encontrar onde a percepção de valor está se perdendo.</p>
-      <div class="steps" id="steps">
-        <div class="step"><i>01</i><div><h3>Entender</h3><p>Diagnóstico do negócio: o que você entrega hoje, onde o cliente deixa de perceber esse valor e o que já funciona.</p></div><span class="check"><svg viewBox="0 0 12 10" fill="none" stroke="#1a0c0e" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></span></div>
-        <div class="step"><i>02</i><div><h3>Organizar</h3><p>Diagnóstico vira direcionamento: o que precisa mudar, o que precisa permanecer e o que pode ser potencializado.</p></div><span class="check"><svg viewBox="0 0 12 10" fill="none" stroke="#1a0c0e" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></span></div>
-        <div class="step"><i>03</i><div><h3>Posicionar</h3><p>Comunicação, atendimento e experiência caminhando na mesma direção, para a marca ser percebida pelo valor que entrega.</p></div><span class="check"><svg viewBox="0 0 12 10" fill="none" stroke="#1a0c0e" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></span></div>
+      <div class="intro">
+        <p>Nenhuma estratégia começa pela estética. Começa pela compreensão do negócio, da sua identidade e do espaço que deseja ocupar no mercado.</p>
+        <p>Na ROVYA, cada decisão de comunicação nasce de um processo estratégico. Não criamos por criar. Entendemos, estruturamos e direcionamos marcas para que sua comunicação seja coerente com o valor que entregam.</p>
+        <p>Nosso método conecta estratégia, posicionamento e comunicação em cinco etapas, transformando decisões isoladas em uma construção consistente de marca.</p>
+        <p>Porque comunicar não é simplesmente aparecer. É saber por que, como e para quem aparecer.</p>
       </div>
+      <div class="steps" id="steps">
+        <div class="step" tabindex="0" role="button" aria-expanded="false"><i>01</i><div><h3>Entender</h3><small>Antes de qualquer decisão, compreender.</small><div class="mais"><p>Analisamos a empresa, sua identidade, seu mercado, seu público, seus desafios e seus objetivos.</p><ul><li>Diagnóstico empresarial e de comunicação</li><li>Análise de mercado e concorrência</li><li>Identificação de oportunidades</li><li>Compreensão dos objetivos do negócio</li></ul></div></div><span class="check"><svg viewBox="0 0 12 10" fill="none" stroke="#1a0c0e" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></span></div>
+        <div class="step" tabindex="0" role="button" aria-expanded="false"><i>02</i><div><h3>Organizar</h3><small>Antes de comunicar, estruturar.</small><div class="mais"><p>Organizamos as informações, os processos de comunicação, as prioridades e os pontos de contato da empresa.</p><ul><li>Estruturação da comunicação</li><li>Organização de processos</li><li>Definição de prioridades</li><li>Alinhamento entre marca e negócio</li></ul></div></div><span class="check"><svg viewBox="0 0 12 10" fill="none" stroke="#1a0c0e" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></span></div>
+        <div class="step" tabindex="0" role="button" aria-expanded="false"><i>03</i><div><h3>Posicionar</h3><small>Antes de aparecer, definir como ser reconhecido.</small><div class="mais"><p>Construímos um posicionamento coerente com a identidade da empresa, seus diferenciais e o valor que entrega ao mercado.</p><ul><li>Posicionamento estratégico</li><li>Proposta de valor</li><li>Narrativa e tom de voz</li><li>Identidade e percepção de marca</li></ul></div></div><span class="check"><svg viewBox="0 0 12 10" fill="none" stroke="#1a0c0e" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></span></div>
+        <div class="step" tabindex="0" role="button" aria-expanded="false"><i>04</i><div><h3>Direcionar</h3><small>Transformar estratégia em decisões.</small><div class="mais"><p>Conduzimos a aplicação do posicionamento nos ambientes físicos e digitais, garantindo coerência entre planejamento e execução.</p><ul><li>Direção estratégica e criativa</li><li>Planejamento de comunicação</li><li>Campanhas e materiais institucionais</li><li>Implementação das estratégias contratadas</li></ul></div></div><span class="check"><svg viewBox="0 0 12 10" fill="none" stroke="#1a0c0e" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></span></div>
+        <div class="step" tabindex="0" role="button" aria-expanded="false"><i>05</i><div><h3>Acompanhar</h3><small>Uma marca precisa continuar evoluindo.</small><div class="mais"><p>Acompanhamos a implementação da estratégia, avaliamos os resultados e identificamos necessidades de ajustes e novas oportunidades.</p><ul><li>Acompanhamento estratégico</li><li>Análise de indicadores</li><li>Relatórios e alinhamentos</li><li>Ajustes e evolução da comunicação</li></ul></div></div><span class="check"><svg viewBox="0 0 12 10" fill="none" stroke="#1a0c0e" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></span></div>
+      </div>
+      <p class="fecho">Não entregamos apenas comunicação. Construímos a direção que sustenta uma marca.<span>Método ROVYA</span></p>
     </div>
   </div>
 </section>
@@ -327,14 +344,18 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
   <div class="wrap about">
     <div class="about-photos reveal">
       <figure class="a" data-parallax=".06"><img src="img/sabrina-sobre.webp" loading="lazy" decoding="async" alt="Sabrina Amorim sentada junto à janela"></figure>
-      <figure class="b" data-parallax="-.1"><img src="img/sabrina-pb.webp" loading="lazy" decoding="async" alt="Sabrina trabalhando, em preto e branco"></figure>
+      <figure class="b" data-parallax="-.1"><img src="img/sabrina-retrato.webp" loading="lazy" decoding="async" alt="Retrato de Sabrina Amorim de blazer claro"></figure>
     </div>
     <div class="reveal">
       <div class="eyebrow">Quem conduz</div>
-      <blockquote>“Construir uma marca vai muito além de escolher cores ou estar nas redes. É entender o que existe por trás de cada negócio.”</blockquote>
-      <p>Eu não acredito em comunicação feita só para preencher calendário. Acredito em decisões bem pensadas, posicionamento consistente e uma estratégia que faça sentido para a realidade de cada empresa.</p>
-      <p>Foi com esse olhar que construí a ROVYA: para enxergar além das redes sociais, conectar as áreas do negócio e transformar comunicação em ferramenta de gestão e crescimento.</p>
+      <blockquote>“Posicionamento não é sobre parecer. É sobre ter clareza de quem se é e sustentar essa identidade.”</blockquote>
+      <p>Como mulher, empresária e CEO, acredito que a maneira como nos posicionamos revela nossos valores, nossas escolhas e a seriedade com que conduzimos aquilo que construímos.</p>
+      <p>Essa mesma visão orienta meu trabalho com marcas. Para mim, posicionamento não se resume à identidade visual, à presença digital ou à forma como uma empresa se apresenta. Ele está na maneira como ela se comunica, toma decisões, entrega valor e é percebida pelo mercado.</p>
+      <p>Não acredito que uma empresa precise seguir tendências ou tentar agradar a todos para conquistar seu espaço. Acredito que ela precisa compreender sua identidade, reconhecer seus diferenciais e comunicar seu valor com clareza e consistência.</p>
+      <p>À frente da ROVYA, conduzo negócios com esse olhar estratégico, respeitando a essência de cada empresa e trabalhando para que sua comunicação esteja à altura do que ela representa.</p>
+      <p>Minha missão não é simplesmente tornar marcas mais conhecidas, mas ajudá-las a serem reconhecidas pelo que realmente são, pelo valor que entregam e pelo espaço que desejam ocupar.</p>
       <div class="sign">Sabrina Amorim</div>
+      <div class="cargo">Fundadora e CEO da ROVYA Creative<br>Estrategista de Comunicação e Posicionamento de Marca</div>
     </div>
   </div>
 </section>
@@ -555,15 +576,10 @@ document.querySelectorAll('[data-words],.reveal').forEach(el=>io.observe(el));
 
 // etapas do método marcam uma a uma
 const steps=[...document.querySelectorAll('.step')];
-const openStep=s=>steps.forEach(o=>o.classList.toggle('open',o===s));
+const openStep=s=>steps.forEach(o=>{o.classList.toggle('open',o===s);o.setAttribute('aria-expanded',o===s)});
 steps.forEach(s=>{
-  // mouse abre ao passar; toque abre/fecha. Separados pelo tipo de ponteiro porque o toque também
-  // dispara um "mouseenter" falso, que abria a etapa e o clique logo em seguida fechava.
-  let toque=false;
-  s.addEventListener('pointerdown',e=>{toque=e.pointerType!=='mouse'});
-  s.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')openStep(s)});
-  s.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse')s.classList.remove('open')});
-  s.addEventListener('click',()=>{if(toque)openStep(s.classList.contains('open')?null:s)});
+  s.addEventListener('click',()=>openStep(s.classList.contains('open')?null:s));
+  s.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();s.click()}});
 });
 new IntersectionObserver((es,o)=>{if(es[0].isIntersecting){steps.forEach((s,i)=>setTimeout(()=>s.classList.add('done'),600+i*700));o.disconnect()}},{threshold:.6}).observe(document.getElementById('steps'));
 
